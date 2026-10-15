@@ -7,9 +7,12 @@
         <ul class="space-y-2">
             @forelse ($skills as $skill)
                 <li class="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-4 py-2">
-                    <span class="text-gray-800">{{ $skill->name }}</span>
+                    <div>
+                        <span class="text-gray-800">{{ $skill->name }}</span>
+                        <span class="text-xs text-gray-500 ml-2">by {{ $skill->user->name }}</span>
+                    </div>
 
-                    @auth
+                    @if (auth()->id() == $skill->user_id)
                         <div class="flex items-center gap-2">
                             <a href="/skills/{{ $skill->id }}/edit"
                                 class="text-sm px-3 py-1 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300">
@@ -25,7 +28,7 @@
                                 </button>
                             </form>
                         </div>
-                    @endauth
+                    @endif
                 </li>
             @empty
                 <p class="text-gray-500">No skills yet. Add one below!</p>

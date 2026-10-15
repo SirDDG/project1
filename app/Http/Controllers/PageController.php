@@ -10,7 +10,7 @@ class PageController extends Controller
     {
         return view('about', [
             'name' => 'Serdg',
-            'skills' => Skill::all(),
+            'skills' => Skill::with('user')->latest()->get(),
         ]);
     }
 
@@ -27,22 +27,28 @@ class PageController extends Controller
             'name' => 'required|max:50',
         ]);
 
-        Skill::create([
+        $request->user()->skills()->create([
             'name' => $request->name,
         ]);
 
         return redirect('/about');
     }
 
-        public function deleteSkill(Skill $skill)
+    public function deleteSkill(Skill $skill)
     {
+        if ($skill->user_id != auth()->id()) {
+            abort(403);
+        }
         $skill->delete();
 
         return redirect('/about');
     }
 
-        public function editSkill(Skill $skill)
+    public function editSkill(Skill $skill)
     {
+        if ($skill->user_id != auth()->id()) {
+            abort(403);
+        }
         return view('edit-skill', [
             'skill' => $skill,
         ]);
@@ -50,6 +56,10 @@ class PageController extends Controller
 
     public function updateSkill(Request $request, Skill $skill)
     {
+        if ($skill->user_id != auth()->id()) {
+            abort(403);
+        }
+
         $request->validate([
             'name' => 'required|max:50',
         ]);
